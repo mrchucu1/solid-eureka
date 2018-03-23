@@ -8,7 +8,7 @@
 <br>
 <input id="testme" type="button" value="Test Me!!!" /><br/>
 <pre>
-  <b>Signature:</b><br><div style="max-widt: 60%;" id="sign">None</div>
+  <b>Signature:</b><br><div style="max-width: 60%;" id="sign">None</div>
   <b>Signature hash:</b><br><div id="sign_hash">None</div>
   <b>Certificate:</b><br><div id="cert">None</div>
   <b>Certificate hash:</b><br><div id="cert_hash">None</div>
@@ -19,11 +19,13 @@
 <br>
 <h2> Check if you have a valid signature </h2>
 <br>
-<textarea placeholder="signature"></textarea><br>
+<textarea placeholder="signature" id="signarure"></textarea><br>
 <textarea placeholder="Document hash"></textarea><br>
 <br>
+<div id="container3"></div>
+<br>
 <input id="File3" type="file" />
-<input id="Button3" type="button" value="Upload private key" />
+<input id="Button3" type="button" value="Upload public key" />
 
 <button id="check">Go!</button>
 <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
@@ -39,13 +41,16 @@
     var button3 = document.getElementById('Button3');
     var container = document.getElementById('container');
     var container2 = document.getElementById('container2');
+    var container3 = document.getElementById('container3');
     var hash = document.getElementById('hash');
     var cert = "";
     var cert_hash = '';
     var document_hash = "7dfa7b2f4073777bf421713cecb01adfc55c9b8cccdce3e65ec49d1c982aaf27";
     var private_key = '';
+    var public_key = '';
     var reader = new FileReader();
     var reader2 = new FileReader();
+    var reader3 = new FileReader();
     button.onclick = function () {
         reader.onload = function () {
             container.innerHTML = reader.result;
@@ -66,13 +71,13 @@
         reader3.onload = function () {
             container3.innerHTML = reader3.result;
             public_key = reader3.result;
-	          hash.innerHTML = sha256(reader3.result);
+	          //hash.innerHTML = sha256(reader3.result);
         }
         input3.files.length > 0 && reader3.readAsText(input3.files[0]);
     }
 $('#testme').click(function() {
     var encrypt = new JSEncrypt();
-    encrypt.setKey(private_key);
+    encrypt.setPrivateKey(private_key);
     var encrypted = encrypt.encrypt(document_hash);
     var hash_encrypted = sha256(encrypted);
     $('#sign').html(encrypted);
@@ -81,10 +86,13 @@ $('#testme').click(function() {
     $('#cert_hash').html(cert_hash);
     $('#document_hash').html(document_hash);
   });
-  $('#testme').click(function() {
+  $('#check').click(function() {
     var decrypt = new JSEncrypt();
-    decrypt.setPrivateKey(public_key);
-    var uncrypted = decrypt.decrypt();
+    decrypt.setPublicKey(public_key);
+    var uncrypted = decrypt.decrypt($('#signarure').val());
+    alert($('#signarure').val());
+    alert(uncrypted);
+    alert(document_hash);
     });
 
 </script>
